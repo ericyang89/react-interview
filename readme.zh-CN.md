@@ -46,29 +46,38 @@ React creates a virtual DOM. When state changes in a component it firstly runs a
 - 很容易测试
 - React 可以结合其他的框架一起使用 (Backbone.js, Angular.js) ， 因为他只是一个界面层。
 
-#### What is the difference between a Presentational component and a Container component?
+#### 展示组件 (Presentational component) 和容器组件 (Container component) 的区别？
 Presentational components are concerned with how things look. They generally receive data and callbacks exclusively via props. These components rarely have their own state, but when they do it generally concerns UI state, as opposed to data state.
+展示组件专注于组件的展示。他们仅仅通过props接受数据和回调。他们很少有自己的状态 (state), 有也是UI的状态，而不是数据的状态。
+
+容器组件专注于业务或逻辑。他们为展示组件或者其他的容器组件提供数据和行为。他们调用 Flux 的 actions，为展示组件提供回调函数。他们经常有状态，也经常作为数据的提供者。
 
 Container components are more concerned with how things work. These components provide the data and behavior to presentational or other container components. They call Flux actions and provide these as callbacks to the presentational components. They are also often stateful as they serve as data sources. 
 
-#### What are the differences between a class component and functional component?
-- Class components allows you to use additional features such as local state and lifecycle hooks. Also, to enable your component to have direct access to your store and thus holds state.
+#### 类组件 (class component) 和函数组件 (functional component) 的区别？
+- 类组件允许你使用额外的功能，例如内部状态和生命周期的钩子。也可以让你的组件可以使用全局存储 (store) 和拥有状态。
 
-- When your component just receives props and renders them to the page, this is a 'stateless component', for which a pure function can be used. These are also called dumb components or presentational components.
+- 如果你的组件只是接受属性（props）展示到页面上， 他就是无状态的组件，可以使用一个纯函数。这样的组件可以叫做木偶组件或展示组件。
 
 #### What is the difference between state and props?
+#### 状态 (state) 和属性 (props) 的区别？
+状态是一种有默认值的数据结构开始于组件挂载的时候。他会随着时间发生突变，通常是用户事件的结果。
 
-The state is a data structure that starts with a default value when a Component mounts. It may be mutated across time, mostly as a result of user events.
+属性(props,props是properties的缩写)数组件的配置。他们从上级获得，保持不变只到接受新的属性。组件不能改变他的属性，但是组件负责组合他们子组件的属性。属性不一定是纯数据，函数也可以作为属性传入。
 
-Props (short for properties) are a Component's configuration. They are received from above and immutable as far as the Component receiving them is concerned. A Component cannot change its props, but it is responsible for putting together the props of its child Components. Props do not have to just be data - callback functions may be passed in as props.
-
-#### Name the different lifecycle methods.
-- `componentWillMount`- this is most commonly used for App configuration in your root component. 
-- `componentDidMount` - here you want to do all the setup you couldn’t do without a DOM, and start getting all the data you need. Also if you want to set up eventListeners etc. this lifecycle hook is a good place to do that.
-- `componentWillReceiveProps` - this lifecyclye acts on particular prop changes to trigger state transitions.
-- `shouldComponentUpdate` - if you’re worried about wasted renders `shouldComponentUpdate` is a great place to improve performance as it allows you to prevent a rerender if component receives new `prop`. shouldComponentUpdate should always return a boolean and based on what this is will determine if the component is rerendered or not.
-- `componentWillUpdate` - rarely used. It can be used instead of `componentWillReceiveProps` on a component that also has `shouldComponentUpdate` (but no access to previous props).
-- `componentDidUpdate` - also commonly used to update the DOM in response to prop or state changes.
+#### 简述不同生命周期的方法。
+- `componentWillMount`- 主要用于在根组件上进行 应用程序 (App) 的配置。
+this is most commonly used for App configuration in your root component. 
+- `componentDidMount` - 可以做一些 DOM 相关的设置，开始获取需要数据。如果你要设置事件监听，这也是个合适的地方。
+here you want to do all the setup you couldn’t do without a DOM, and start getting all the data you need. Also if you want to set up eventListeners etc. this lifecycle hook is a good place to do that.
+- `componentWillReceiveProps` - 这个生命周期主要用于指定属性改变的时候触发状态过渡。
+this lifecyclye acts on particular prop changes to trigger state transitions.
+- `shouldComponentUpdate` - 如果你担心浪费多余的渲染 (render) 次数， `shouldComponentUpdate` 是一个很好的提高性能的地方。他可以在组件接受新的属性的时候阻止渲染。你可以根据是否需要渲染，在shouldComponentUpdate中返回一个相应的布尔值。
+is a great place to improve performance as it allows you to prevent a rerender if component receives new `prop`. shouldComponentUpdate should always return a boolean and based on what this is will determine if the component is rerendered or not.
+- `componentWillUpdate` - 很少被使用。当组件也有`shouldComponentUpdate`的时候，可以用于替代 `componentWillReceiveProps` (但是无法获取上一次的属性)。
+rarely used. It can be used instead of `componentWillReceiveProps` on a component that also has `shouldComponentUpdate` (but no access to previous props).
+- `componentDidUpdate` - 也用于在属性和状态改变之后更新 DOM 。
+also commonly used to update the DOM in response to prop or state changes.
 - `componentWillUnmount` - here you can cancel any outgoing network requests, or remove all event listeners associated with the component.
 
 #### Where in a React component should you make an AJAX request?
