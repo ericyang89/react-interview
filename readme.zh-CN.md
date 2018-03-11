@@ -75,39 +75,40 @@ this lifecyclye acts on particular prop changes to trigger state transitions.
 - `shouldComponentUpdate` - 如果你担心浪费多余的渲染 (render) 次数， `shouldComponentUpdate` 是一个很好的提高性能的地方。他可以在组件接受新的属性的时候阻止渲染。你可以根据是否需要渲染，在shouldComponentUpdate中返回一个相应的布尔值。
 is a great place to improve performance as it allows you to prevent a rerender if component receives new `prop`. shouldComponentUpdate should always return a boolean and based on what this is will determine if the component is rerendered or not.
 - `componentWillUpdate` - 很少被使用。当组件也有`shouldComponentUpdate`的时候，可以用于替代 `componentWillReceiveProps` (但是无法获取上一次的属性)。
-rarely used. It can be used instead of `componentWillReceiveProps` on a component that also has `shouldComponentUpdate` (but no access to previous props).
 - `componentDidUpdate` - 也用于在属性和状态改变之后更新 DOM 。
-also commonly used to update the DOM in response to prop or state changes.
-- `componentWillUnmount` - here you can cancel any outgoing network requests, or remove all event listeners associated with the component.
+- `componentWillUnmount` - 在这个方法内，你可以取消所有的网络请求，和移除组件相关的事件监听。
 
 #### Where in a React component should you make an AJAX request?
-`componentDidMount` is where an AJAX request should be made in a React component. This method will be executed when the component “mounts” (is added to the DOM) for the first time. This method is only executed once during the component’s life. Importantly, you can’t guarantee the AJAX request will have resolved before the component mounts. If it doesn't, that would mean that you’d be trying to setState on an unmounted component, which would not work. Making your AJAX request in `componentDidMount` will guarantee that there’s a component to update.
+#### 在 React 组件中，什么地方比较适合发送网络请求？
+`componentDidMount` 就是在 React 组件内发送网络请求的地方。这个方法在组件挂载成功后会执行，并且只执行一次。一定要保证网络请求是在组件挂载成功之后发出的，这样才能保证网络请求返回的数据是在组件挂载之后的，也是这样才能保证组件会更新。
 
-#### What are controlled components?
+#### 什么是受控组件(controlled component)?
 
-In HTML, form elements such as `<input>`, `<textarea>`, and `<select>` typically maintain their own state and update it based on user input. When a user submits a form the values from the aforementioned elements are sent with the form. With React it works differently. The component containing the form will keep track of the value of the input in it's state and will re-render the component each time the callback function e.g. `onChange` is fired as the state will be updated. An input form element whose value is controlled by React in this way is called a "controlled component".
+在 HTML 中，表单元素，例如：`<input>`, `<textarea>`和 `<select>`。他们自己维护他们自己的状态，并且根据用户的输入自动更新。当用户提交表单时，表单中上面提到的这些元素的值就会和表单一起被提交。在 React 中，完全不是这样的。包含表单的组件会跟踪元素的值。把这些值保持到组件的 state 中。当 `onChange`事件触发时，state 就会更新，然后组件的元素就会被重新渲染。这种表单中组件，在 React 中，被称为“受控组件”。
 
-#### What are refs used for in React?
 
-Refs are used to get reference to a DOM node or an instance of a component in React. Good examples of when to use refs are for managing focus/text selection, triggering imperative animations, or integrating with third-party DOM libraries. You should avoid using string refs and inline ref callbacks. Callback refs are advised by React.
+#### 在 React 中，refs 主要是干什么用的?
 
-#### What is a higher order component?
+Refs 用于拿到 dom 节点的引用或者 React 实例的引用。例如：管理 text 标签的 focus；触发动画事件，或者集成第三方 DOM 库。你应该避免使用字符串refs，React 建议使用回调 refs。
 
-A higher-order component is a function that takes a component and returns a new component. HOC's allow you to reuse code, logic and bootstrap abstraction. The most common is probably Redux’s `connect` function. Beyond simply sharing utility libraries and simple composition, HOCs are the best way to share behavior between React Components. If you find yourself writing a lot of code in different places that does the same thing, you may be able to refactor that code into a reusable HOC.
 
-<p>Exercises</p>
+#### 什么是高阶组件?
 
+高阶组件是一个函数，这个函数的输入（函数的参数）是一个组件，输出（函数的返回值）是一个新的组件。高阶组件可以让你重用你的代码、逻辑和辅助抽象（原文：bootstrap abstraction）。
+最常见的可能就是 Redux 的 `connect` 函数。除了简单的工具库和简单的组合，高阶函数是多个 React 组件共享行为的最好的方式。如果你发现你在不同的地方写同样的代码干同样的事，你应该就可以这些功能重构到高阶组件内。
+
+练习：
 ----
-- Write an HOC that reverses it’s input
-'- Write an HOC that supplies data from an API to it’s Passed Component
-- Write an HOC that implements shouldComponentUpdate to avoid reconciliation.
-- Write an HOC that uses React.Children.toArray to sort the children passed to it's Passed Component.
+- 写一个高阶组件反转输入。
+- 写一个高阶组件，根据一个 API 请求数据，将这些数据提供给传入的组件。
+- 写一个高阶组件，实现shouldComponentUpdate，避免不必要的重复渲染（原文：avoid reconciliation）。
+- 写一个高阶组件，使用 React.Children.toArray 把他自己的子组件（children）排序，然后传给传入的组件。
 
 
-#### What advantages are there in using arrow functions?
-Scope safety: Until arrow functions, every new function defined its own this value (a new object in the case of a constructor, undefined in strict mode function calls, the base object if the function is called as an "object method", etc.). An arrow function does not create its own this, the this value of the enclosing execution context is used. 
-Compactness: Arrow functions are easier to read and write.
-Clarity: When almost everything is an arrow function, any regular function immediately sticks out for defining the scope. A developer can always look up the next-higher function statement to see what the thisObject is.
+#### 使用箭头函数的好处?
+作用域安全：除了箭头函数，每个新的函数定义了他自己 this 的值（ this 在构造函数中是个新的对象，this在“严格模式”下的函数调用是 undefined，this 是对象，如果函数作为对象的方法调用的，等等）。箭头函数不创建他自己的this，而是指向他自己的执行环境（execution context）。
+简洁：箭头函数易于读写。
+清晰：当几乎所有的函数都使用箭头函数，一个普通的函数就很明显是定义作用域。开发者可以通过查找父级函数的声明，来知道 this 对象。（原文： A developer can always look up the next-higher function statement to see what the thisObject is.）
 
 #### Why is it advised to pass a callback function to setState as opposed to an object?
 Because `this.props` and `this.state` may be updated asynchronously, you should not rely on their values for calculating the next state.
